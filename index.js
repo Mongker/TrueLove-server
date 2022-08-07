@@ -44,7 +44,6 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
 // to serve images inside public folder
-app.use('/images', express.static('images'));
 app.use('/auth', AuthRoute);
 app.use('/user', UserRoute);
 app.use('/posts', PostRoute);
@@ -54,7 +53,11 @@ app.use('/chat', ChatRoute);
 
 
 // static file
-app.use(express.static('public'));
+app.use('/images/:name', function(req, res) {
+    const { name } = req.params;
+    return res.sendFile(path.join(__dirname, `public/images/${name}`));
+});
+
 app.use(express.static(path.join(__dirname, 'build'), {
     setHeaders: function (res, path) {
         return res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
